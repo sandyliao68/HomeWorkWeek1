@@ -12,25 +12,22 @@ namespace HomeWorkWeek1.Controllers
 {
     public class 客戶聯絡人Controller : Controller
     {
-        private ClientEntities db = new ClientEntities();
-
+        //private ClientEntities db = new ClientEntities();
+        客戶聯絡人Repository repo = RepositoryHelper.Get客戶聯絡人Repository();
+       
         // GET: 客戶聯絡人
         public ActionResult Index()
         {
-           // var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料);
-            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料).Where(客 => 客.客戶資料.是否已刪除 == false);       
-            return View(客戶聯絡人.ToList());
+            //var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料).Where(客 => 客.客戶資料.是否已刪除 == false);       
+            //return View(客戶聯絡人.ToList());
+            return View(repo.All());
         }
 
         [HttpPost]
-        public ActionResult Index(string PName)
+        public ActionResult Index(string PName, string TitleName)
         {
-             var data = db.客戶聯絡人.OrderByDescending(p => p.Id).AsQueryable();
-            if (!String.IsNullOrEmpty(PName))
-            {
-                data = data.Where(p => p.姓名.Contains(PName));
-            }
-            return View(data);
+            var data = repo.Query(PName, TitleName);
+            return View(data);         
         }
 
         // GET: 客戶聯絡人/Details/5
@@ -40,7 +37,8 @@ namespace HomeWorkWeek1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            //客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -51,6 +49,7 @@ namespace HomeWorkWeek1.Controllers
         // GET: 客戶聯絡人/Create
         public ActionResult Create()
         {
+            var db = (ClientEntities)repo.UnitOfWork.Context;
             ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
             return View();
         }
@@ -64,11 +63,13 @@ namespace HomeWorkWeek1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(客戶聯絡人);
-                db.SaveChanges();
+                客戶聯絡人.是否已刪除 = false;
+                repo.Add(客戶聯絡人);
+                repo.UnitOfWork.Commit();
+               // db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            var db = (ClientEntities)repo.UnitOfWork.Context;            
             ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
@@ -80,11 +81,12 @@ namespace HomeWorkWeek1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
             }
+            var db = (ClientEntities)repo.UnitOfWork.Context;
             ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
@@ -96,9 +98,11 @@ namespace HomeWorkWeek1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,客戶Id,職稱,姓名,Email,手機,電話")] 客戶聯絡人 客戶聯絡人)
         {
+            var db = (ClientEntities)repo.UnitOfWork.Context;
             if (ModelState.IsValid)
             {
                 db.Entry(客戶聯絡人).State = EntityState.Modified;
+                客戶聯絡人.是否已刪除 = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -113,7 +117,7 @@ namespace HomeWorkWeek1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -126,9 +130,11 @@ namespace HomeWorkWeek1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(客戶聯絡人);
-            db.SaveChanges();
+            客戶聯絡人 客戶聯絡人 = repo.Find(id);
+            客戶聯絡人.是否已刪除 = true;
+            repo.UnitOfWork.Commit();
+            //db.客戶聯絡人.Remove(客戶聯絡人);
+           // db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -136,6 +142,7 @@ namespace HomeWorkWeek1.Controllers
         {
             if (disposing)
             {
+                var db = (ClientEntities)repo.UnitOfWork.Context;
                 db.Dispose();
             }
             base.Dispose(disposing);

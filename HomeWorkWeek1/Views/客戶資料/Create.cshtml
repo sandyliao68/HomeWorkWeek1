@@ -4,7 +4,7 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>新增</h2>
 
 
 @using (Html.BeginForm()) 
@@ -60,6 +60,15 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶分類, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">               
+                @Html.DropDownList("客戶分類", (SelectList)ViewBag.客戶分類)
+                @*@Html.DropDownList("客戶分類", (IEnumerable<SelectListItem>)ViewBag.客戶分類)*@
+                @Html.ValidationMessageFor(model => model.客戶分類, "", new { @class = "text-danger" })
             </div>
         </div>
 

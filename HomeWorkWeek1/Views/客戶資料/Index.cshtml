@@ -11,10 +11,18 @@
 </p>
 
 
-@using (Html.BeginForm("Index","客戶資料",FormMethod.Get))
+@using (Html.BeginForm("Index", "客戶資料", FormMethod.Get))
 {
     <p>
-        <input type="search" name="keyword" placeholder="請輸入關键字" value="" />
+        <text>客戶名稱</text>
+        <input type="search" name="keyword" placeholder="請輸入客戶名稱" value="" />
+        <text>客戶分類</text>
+        <select name="drpCategory">
+            <option value="">請選擇</option>
+            <option value="北區客戶">北區客戶</option>
+            <option value="中區客戶">中區客戶</option>
+            <option value="南區客戶">南區客戶</option>
+        </select>
         <input type="submit" value="搜尋" class="btn btn-default" />
     </p>
 }
@@ -39,35 +47,43 @@
         <th>
             @Html.DisplayNameFor(model => model.Email)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.客戶分類)
+        </th>
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.客戶名稱)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.統一編號)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.電話)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.傳真)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.地址)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.ActionLink("修改", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("顯示明細", "Details", new { id=item.Id }) |
-            @Html.ActionLink("刪除", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶名稱)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.統一編號)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.電話)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.傳真)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.地址)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶分類)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("顯示明細", "Details", new { id = item.Id }) |
+                @Html.ActionLink("刪除", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
