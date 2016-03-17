@@ -15,22 +15,27 @@ namespace HomeWorkWeek1.Controllers
         private ClientEntities db = new ClientEntities();
 
         // GET: 客戶資料
-        public ActionResult Index()
-        {
-            var data = db.客戶資料.Where(p => p.是否已刪除 == false).ToList();
-            return View(data);
-        }
-
-        [HttpPost]
-        public ActionResult Index(string ClientName)
+        public ActionResult Index(string keyword)
         {
             var data = db.客戶資料.OrderByDescending(p => p.Id).AsQueryable();
-            if (!String.IsNullOrEmpty(ClientName))
+            if (!String.IsNullOrEmpty(keyword))
             {
-                data = data.Where(p => p.客戶名稱.Contains(ClientName));
+                data = data.Where(p => p.客戶名稱.Contains(keyword));
             }
-            return View(data);
+            return View(data.ToList());
+
         }
+
+        //[HttpPost]
+        //public ActionResult Index(string ClientName)
+        //{
+        //    var data = db.客戶資料.OrderByDescending(p => p.Id).AsQueryable();
+        //    if (!String.IsNullOrEmpty(ClientName))
+        //    {
+        //        data = data.Where(p => p.客戶名稱.Contains(ClientName));
+        //    }
+        //    return View(data);
+        //}
 
         // GET: 客戶資料/Details/5
         public ActionResult Details(int? id)

@@ -11,10 +11,10 @@
 </p>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index","客戶資料",FormMethod.Get))
 {
     <p>
-        客戶名稱: @Html.TextBox("ClientName")
+        <input type="search" name="keyword" placeholder="請輸入關键字" value="" />
         <input type="submit" value="搜尋" class="btn btn-default" />
     </p>
 }
