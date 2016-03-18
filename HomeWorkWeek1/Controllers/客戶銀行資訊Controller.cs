@@ -7,9 +7,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HomeWorkWeek1.Models;
+using HomeWorkWeek1.ActionFilter;
 
 namespace HomeWorkWeek1.Controllers
 {
+     [記錄Action與ActionResult執行的時間]
     public class 客戶銀行資訊Controller : Controller
     {
         //private ClientEntities db = new ClientEntities();

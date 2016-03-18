@@ -8,68 +8,105 @@
 
 <p>
     @Html.ActionLink("新增", "Create")
+    @if (!String.IsNullOrEmpty(Convert.ToString(TempData["EditDoneMsg"])))
+    {
+        <h3>@TempData["EditDoneMsg"]</h3>
+    }
 </p>
-
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Get))
 {
-    <p>
-        聯絡人姓名: @Html.TextBox("PName")
-        職稱: @Html.TextBox("TitleName")
-        <input type="submit" value="搜尋" class="btn btn-default" />
-    </p>
+<p>   
+    <text>聯絡人姓名</text>
+    <input type="search" name="PName" placeholder="請輸入聯絡人姓名" value="@ViewData["PName"]" />
+    <text>職稱</text>
+    <input type="search" name="TitleName" placeholder="請輸入職稱" value="" />  
+    <input type="submit" value="搜尋" class="btn btn-default" />
+</p>
 }
 
-<table class="table">
+
+@using (Html.BeginForm())
+{ 
+    <table class="table">
     <tr>
+        @* 未排序
+    <th>
+        @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.職稱)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.姓名)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Email)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.手機)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.電話)
+    </th>
+        *@
         <th>
-            @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+            @Html.ActionLink("客戶名稱", "Index", new { sortOrder = ViewBag.客戶名稱SortParm })       
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.職稱)
+            @Html.ActionLink("職稱", "Index", new { sortOrder = ViewBag.職稱SortParm })            
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.姓名)
+            @Html.ActionLink("姓名", "Index", new { sortOrder = ViewBag.姓名SortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Email)
+            @Html.ActionLink("Email", "Index", new { sortOrder = ViewBag.EmailSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.手機)
+            @Html.ActionLink("手機", "Index", new { sortOrder = ViewBag.手機SortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.電話)
+            @Html.ActionLink("電話", "Index", new { sortOrder = ViewBag.電話SortParm })
         </th>
-        
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@{
+               var data = Model.ToArray();
+}
+@for (var i = 0; i < data.Length; i++)
+{
+    @Html.HiddenFor(modelItem => data[i].Id)
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
+            @Html.DisplayFor(modelItem => data[i].客戶資料.客戶名稱)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.職稱)
+            @Html.EditorFor(modelItem => data[i].職稱)<br />
+            @Html.ValidationMessageFor(modelItem => data[i].職稱)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.姓名)
+            @Html.DisplayFor(modelItem => data[i].姓名)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Email)
+            @Html.DisplayFor(modelItem => data[i].Email)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.手機)
+            @Html.EditorFor(modelItem => data[i].手機)<br />
+            @Html.ValidationMessageFor(modelItem => data[i].手機)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.電話)
+            @Html.EditorFor(modelItem => data[i].電話)<br />
+            @Html.ValidationMessageFor(modelItem => data[i].電話)
         </td>
       
         <td>
-            @Html.ActionLink("修改", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("顯示明細", "Details", new { id = item.Id }) |
-            @Html.ActionLink("刪除", "Delete", new { id=item.Id })
+            @Html.ActionLink("修改", "Edit", new { id=data[i].Id }) |
+            @Html.ActionLink("顯示明細", "Details", new { id = data[i].Id }) |
+            @Html.ActionLink("刪除", "Delete", new { id=data[i].Id })
         </td>
     </tr>
 }
 
 </table>
+    <button class="btn btn-primary">批次更新</button>
+}

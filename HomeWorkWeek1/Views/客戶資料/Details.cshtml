@@ -64,3 +64,6 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@*@Html.Partial("../客戶聯絡人/Index", Model.客戶聯絡人)*@
+@Html.Action("Index", "客戶聯絡人", new { CId = Model.Id })

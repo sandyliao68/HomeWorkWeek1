@@ -7,9 +7,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HomeWorkWeek1.Models;
+using HomeWorkWeek1.ActionFilter;
 
 namespace HomeWorkWeek1.Controllers
 {
+    [記錄Action與ActionResult執行的時間]
     public class 客戶資料Controller : Controller
     {
         //改用 repo       
@@ -25,11 +27,74 @@ namespace HomeWorkWeek1.Controllers
        
 
         // GET: 客戶資料
-         public ActionResult Index(string keyword, string drpCategory)
+         public ActionResult Index(string keyword, string drpCategory,string sortOrder)
         {
 
+           // var db = (ClientEntities)repo.UnitOfWork.Context;
+            SelectList selectList = new SelectList(CategoryList, "CategoryID", "CategoryName");
+            ViewBag.客戶分類 = selectList;
             var data = repo.Query(keyword, drpCategory);
-            return View(data);
+            //return View(data);
+            //* 修改「客戶資料列表」與「客戶聯絡人列表」頁面，設定讓每個欄位都能進行排序 (可升冪(DESC)、可降冪排序)
+            //參考:http://www.asp.net/mvc/overview/getting-started/getting-started-with-ef-using-mvc/sorting-filtering-and-paging-with-the-entity-framework-in-an-asp-net-mvc-application
+            ViewBag.客戶名稱SortParm = String.IsNullOrEmpty(sortOrder) ? "客戶名稱_desc" : "";  //初始排序方法
+            ViewBag.統一編號SortParm = sortOrder == "統一編號" ? "統一編號_desc" : "統一編號";
+            ViewBag.電話SortParm = sortOrder == "電話" ? "電話_desc" : "電話";
+            ViewBag.傳真SortParm = sortOrder == "傳真" ? "傳真_desc" : "傳真";
+            ViewBag.地址SortParm = sortOrder == "地址" ? "地址_desc" : "地址";
+            ViewBag.EmailSortParm = sortOrder == "Email" ? "Email_desc" : "Email";
+            ViewBag.客戶分類SortParm = sortOrder == "客戶分類" ? "客戶分類_desc" : "客戶分類";
+            //data = from s in db.客戶資料
+            //               select s;
+             data= from s in data
+                   select s;
+            switch (sortOrder)
+            {
+                 //客戶名稱	統一編號	電話	傳真	地址	Email	客戶分類
+                case "客戶名稱_desc":
+                    data = data.OrderByDescending(s => s.客戶名稱);
+                    break;
+                case "統一編號":
+                    data = data.OrderBy(s => s.統一編號);
+                    break;
+                case "統一編號_desc":
+                    data = data.OrderByDescending(s => s.統一編號);
+                    break;
+                case "電話":
+                    data = data.OrderBy(s => s.電話);
+                    break;
+                case "電話_desc":
+                    data = data.OrderByDescending(s => s.電話);
+                    break;
+                case "傳真":
+                    data = data.OrderBy(s => s.傳真);
+                    break;
+                case "傳真_desc":
+                    data = data.OrderByDescending(s => s.傳真);
+                    break;
+                case "地址":
+                    data = data.OrderBy(s => s.地址);
+                    break;
+                case "地址_desc":
+                    data = data.OrderByDescending(s => s.地址);
+                    break;
+                case "Email":
+                    data = data.OrderBy(s => s.Email);
+                    break;
+                case "Email_desc":
+                    data = data.OrderByDescending(s => s.Email);
+                    break;
+                case "客戶分類":
+                    data = data.OrderBy(s => s.客戶分類);
+                    break;
+                case "客戶分類_desc":
+                    data = data.OrderByDescending(s => s.客戶分類);
+                    break;
+                default:
+                    data = data.OrderBy(s => s.客戶名稱);
+                    break;
+            }
+            return View(data.ToList());
 
         }
 
@@ -89,7 +154,7 @@ namespace HomeWorkWeek1.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類")] 客戶資料 客戶資料)
+        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類,帳號,密碼")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -127,7 +192,7 @@ namespace HomeWorkWeek1.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類,帳號,密碼")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
