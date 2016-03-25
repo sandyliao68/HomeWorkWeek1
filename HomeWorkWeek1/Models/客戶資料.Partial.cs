@@ -36,6 +36,7 @@ namespace HomeWorkWeek1.Models
         [EmailAddress(ErrorMessage = "請輸入正確的電子信箱")]
         public string Email { get; set; }
 
+        [UIHint("客戶分類顯示")]
         public string 客戶分類 { get; set; }
     
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }

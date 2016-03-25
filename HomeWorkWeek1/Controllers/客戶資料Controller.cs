@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using HomeWorkWeek1.Models;
 using HomeWorkWeek1.ActionFilter;
+using PagedList;
 
 namespace HomeWorkWeek1.Controllers
 {
@@ -15,25 +16,22 @@ namespace HomeWorkWeek1.Controllers
     public class 客戶資料Controller : Controller
     {
         //改用 repo       
-        //private ClientEntities db = new ClientEntities();
+        //private ClientEntities db = new ClientEntities();     
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
-         List<Category> CategoryList = new List<Category>()
-            {
-                new Category {CategoryID="", CategoryName="請選擇"},
-                new Category {CategoryID="北區客戶", CategoryName="北區客戶"},
-                new Category {CategoryID="中區客戶", CategoryName="中區客戶"},
-                new Category {CategoryID="南區客戶", CategoryName="南區客戶"},            
-            };
-       
-
         // GET: 客戶資料
-         public ActionResult Index(string keyword, string drpCategory,string sortOrder)
+         public ActionResult Index(string keyword, string drpCategory,string sortOrder,int pageNo=1)
         {
-
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Value = "1", Text = "北區客戶" });
+            items.Add(new SelectListItem() { Value = "2", Text = "中區客戶" });
+            items.Add(new SelectListItem() { Value = "3", Text = "南區客戶" });
+            ViewData["drpCategory"] = new SelectList(items, "Value", "Text");
            // var db = (ClientEntities)repo.UnitOfWork.Context;
-            SelectList selectList = new SelectList(CategoryList, "CategoryID", "CategoryName");
-            ViewBag.客戶分類 = selectList;
+            //SelectList selectList = new SelectList(CategoryList, "CategoryID", "CategoryName");
+            //ViewBag.客戶分類 = selectList;
             var data = repo.Query(keyword, drpCategory);
+           
+
             //return View(data);
             //* 修改「客戶資料列表」與「客戶聯絡人列表」頁面，設定讓每個欄位都能進行排序 (可升冪(DESC)、可降冪排序)
             //參考:http://www.asp.net/mvc/overview/getting-started/getting-started-with-ef-using-mvc/sorting-filtering-and-paging-with-the-entity-framework-in-an-asp-net-mvc-application
@@ -94,7 +92,11 @@ namespace HomeWorkWeek1.Controllers
                     data = data.OrderBy(s => s.客戶名稱);
                     break;
             }
-            return View(data.ToList());
+            //分頁設定
+      
+            var pageData = data.ToPagedList(pageNo,5);
+            //ViewBag.pageNo = pageNo;
+            return View(pageData);
 
         }
 
@@ -141,10 +143,16 @@ namespace HomeWorkWeek1.Controllers
             //}
             //ViewBag.客戶分類 = items;
             //客戶分類下拉選單清單
-           
 
-            SelectList selectList = new SelectList(CategoryList, "CategoryID", "CategoryName");
-            ViewBag.客戶分類 = selectList;
+
+            //SelectList selectList = new SelectList(CategoryList, "CategoryID", "CategoryName");
+            //ViewBag.客戶分類 = selectList;
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Value = "", Text = "--請選擇--" });
+            items.Add(new SelectListItem() { Value = "1", Text = "北區客戶" });
+            items.Add(new SelectListItem() { Value = "2", Text = "中區客戶" });
+            items.Add(new SelectListItem() { Value = "3", Text = "南區客戶" });
+            ViewBag.客戶分類 = new SelectList(items, "Value", "Text");
 
             return View();
         }
@@ -182,8 +190,14 @@ namespace HomeWorkWeek1.Controllers
             {
                 return HttpNotFound();
             }           
-            SelectList selectList= new SelectList(CategoryList, "CategoryID", "CategoryName", 客戶資料.客戶分類);
-            ViewBag.客戶分類 = selectList;
+            //SelectList selectList= new SelectList(CategoryList, "CategoryID", "CategoryName", 客戶資料.客戶分類);
+            //ViewBag.客戶分類 = selectList;
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Value = "", Text = "--請選擇--" });
+            items.Add(new SelectListItem() { Value = "1", Text = "北區客戶" });
+            items.Add(new SelectListItem() { Value = "2", Text = "中區客戶" });
+            items.Add(new SelectListItem() { Value = "3", Text = "南區客戶" });
+            ViewBag.Category = new SelectList(items, "Value", "Text", 客戶資料.客戶分類);
             return View(客戶資料);
         }
 

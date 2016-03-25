@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<HomeWorkWeek1.Models.客戶資料>
+@using PagedList
+@using PagedList.Mvc
 
+@{
+    var data = Model as IPagedList;
+}
 @{
     ViewBag.Title = "Index";
 }
@@ -15,14 +20,9 @@
 {
     <p>
         <text>客戶名稱</text>
-        <input type="search" name="keyword" placeholder="請輸入客戶名稱" value="" />
+        @Html.TextBox("keyword", null, new { onchange = "this.form.submit();" })
         <text>客戶分類</text>
-        <select name="drpCategory">
-            <option value="">請選擇</option>
-            <option value="北區客戶">北區客戶</option>
-            <option value="中區客戶">中區客戶</option>
-            <option value="南區客戶">南區客戶</option>
-        </select>
+        @Html.DropDownList("drpCategory", null, "--請選擇--", new { onchange = "this.form.submit();" })
         <input type="submit" value="搜尋" class="btn btn-default" />
     </p>
 }
@@ -36,17 +36,17 @@
         <th>
             @*@Html.DisplayNameFor(model => model.統一編號))*@
             @Html.ActionLink("統一編號", "Index", new { sortOrder = ViewBag.統一編號SortParm })
-       </th>
+        </th>
         <th>
             @*@Html.DisplayNameFor(model => model.電話)*@
             @Html.ActionLink("電話", "Index", new { sortOrder = ViewBag.電話SortParm })
         </th>
         <th>
-             @*@Html.DisplayNameFor(model => model.傳真)*@
+            @*@Html.DisplayNameFor(model => model.傳真)*@
             @Html.ActionLink("傳真", "Index", new { sortOrder = ViewBag.傳真SortParm })
         </th>
         <th>
-              @* @Html.DisplayNameFor(model => model.地址)*@
+            @* @Html.DisplayNameFor(model => model.地址)*@
             @Html.ActionLink("地址", "Index", new { sortOrder = ViewBag.地址SortParm })
         </th>
         <th>
@@ -59,38 +59,40 @@
         </th>
 
         <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶名稱)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.統一編號)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.電話)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.傳真)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.地址)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶分類)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("詳細資料", "Details", new { id = item.Id }) |
+                @Html.ActionLink("刪除", "Delete", new { id = item.Id })
+            </td>
         </tr>
+    }
 
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.客戶名稱)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.統一編號)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.電話)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.傳真)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.地址)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.客戶分類)
-                    </td>
-                    <td>
-                        @Html.ActionLink("修改", "Edit", new { id = item.Id }) |
-                        @Html.ActionLink("詳細資料", "Details", new { id = item.Id }) |
-                        @Html.ActionLink("刪除", "Delete", new { id = item.Id })
-                    </td>
-                </tr>
-            }
+</table>
+@Html.PagedListPager(data, p => Url.Action("Index", new { pageNo = p }))
 
-        </table>
